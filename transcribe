@@ -1,0 +1,13 @@
+#!/bin/bash
+# Wrapper script for transcribe.py
+# Place in ~/bin or /usr/local/bin to use from anywhere
+
+# Find the directory where this script is located
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# If this script is in ~/bin or a symlink, find the actual repository
+if [[ -L "${BASH_SOURCE[0]}" ]]; then
+    SCRIPT_DIR="$( cd "$( dirname "$(readlink "${BASH_SOURCE[0]}")" )" && pwd )"
+fi
+
+python "$SCRIPT_DIR/transcribe.py" "$@"
