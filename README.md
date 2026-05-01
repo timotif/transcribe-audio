@@ -39,35 +39,16 @@ After that you can run `transcribe audio.mp3` from any directory.
 
 - **Multiple model sizes**: Choose from tiny, base, small, medium, or large models
 
-### Basic transcription (uses 'small' model by default)
+## Usage
+
+### Using the bash wrapper (after adding to PATH)
 ```bash
-python transcribe.py audio.mp3
+transcribe audio.mp3
+transcribe audio.wav --model tiny
+transcribe audio.m4a --model large --output transcript.txt
 ```
 
-### Specify a different model size
-```bash
-python transcribe.py audio.wav --model tiny
-python transcribe.py audio.m4a --model large
-```
-
-### Specify language
-```bash
-python transcribe.py audio.mp3 --language en
-python transcribe.py audio.wav --language es
-```
-
-### Save to file
-```bash
-python transcribe.py audio.mp3 --output transcript.txt
-python transcribe.py audio.m4a -o output.txt
-```
-
-### Combine options
-```bash
-python transcribe.py audio.wav --model large --language en --output transcript.txt
-```
-
-### View help
+### Using the Python script directly
 ```bash
 python transcribe.py --help
 ```
