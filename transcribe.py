@@ -10,16 +10,16 @@ import os
 from pathlib import Path
 
 try:
-    import whisper
+    from faster_whisper import WhisperModel
 except ImportError:
-    print("Error: whisper is not installed.", file=sys.stderr)
+    print("Error: faster-whisper is not installed.", file=sys.stderr)
     print("Install it with: pip install -r requirements.txt", file=sys.stderr)
     sys.exit(1)
 
 
 def transcribe_audio(audio_path: str, model_name: str = "small", language: str = None, output_format: str = "text") -> str:
     """
-    Transcribe an audio file using Whisper.
+    Transcribe an audio file using FasterWhisper.
     
     Args:
         audio_path: Path to the audio file
@@ -39,18 +39,21 @@ def transcribe_audio(audio_path: str, model_name: str = "small", language: str =
     if audio_file.suffix.lower() not in supported_formats:
         raise ValueError(f"Unsupported audio format: {audio_file.suffix}. Supported: {supported_formats}")
     
-    print(f"Loading Whisper model '{model_name}'...", file=sys.stderr)
-    model = whisper.load_model(model_name)
+    print(f"Loading FasterWhisper model '{model_name}'...", file=sys.stderr)
+    model = WhisperModel(model_name)
     
     print(f"Transcribing audio file: {audio_path}", file=sys.stderr)
-    result = model.transcribe(str(audio_path), language=language)
+    segments, info = model.transcribe(str(audio_path), language=language)
     
-    return result["text"]
+    # Extract text from segments
+    text = "".join([segment.text for segment in segments])
+    
+    return text
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Transcribe audio files to text using OpenAI's Whisper model",
+        description="Transcribe audio files to text using FasterWhisper (faster implementation of OpenAI's Whisper model)",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:

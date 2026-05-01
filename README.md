@@ -1,11 +1,12 @@
-# Audio Transcription CLI
+# Audio Transcription CLI - FasterWhisper
 
-A self-contained Python CLI tool for transcribing audio files to text using OpenAI's Whisper model locally.
+A self-contained Python CLI tool for transcribing audio files to text using FasterWhisper, a faster implementation of OpenAI's Whisper model.
 
 ## Features
 
+- **Faster transcription**: Uses FasterWhisper (2-5x faster than standard Whisper with minimal accuracy loss)
+- **GPU optimized**: Automatically uses GPU acceleration when available
 - **Local transcription**: Uses Whisper model entirely offline (after initial model download)
-- **Multiple model sizes**: Choose from tiny, base, small, medium, or large models
   - Smaller models are faster but less accurate
   - Larger models are more accurate but require more resources
 - **Auto language detection**: Automatically detects the language, or specify manually
@@ -22,11 +23,11 @@ A self-contained Python CLI tool for transcribing audio files to text using Open
 pip install -r requirements.txt
 ```
 
-This will install:
-- `openai-whisper`: The Whisper speech recognition model
-- `setuptools`: Required for building dependencies
+This will install `faster-whisper` - a much faster implementation of OpenAI's Whisper model.
 
-## Usage
+## Features Overview
+
+- **Multiple model sizes**: Choose from tiny, base, small, medium, or large models
 
 ### Basic transcription (uses 'small' model by default)
 ```bash
@@ -108,9 +109,10 @@ python transcribe.py meeting.m4a --model medium
 
 ## Notes
 
+- FasterWhisper is **2-5x faster** than standard Whisper with comparable accuracy
 - The first run will download the Whisper model (~40MB-2.9GB depending on model size)
 - Transcription speed depends on audio length and model size
-- GPU acceleration is automatically used if available (NVIDIA CUDA/AMD ROCm)
+- GPU acceleration is automatically used if available (NVIDIA CUDA, AMD ROCm, Apple Metal)
 - For best results with poor audio quality, use larger models (medium/large)
 
 ## Troubleshooting
@@ -130,4 +132,4 @@ python transcribe.py meeting.m4a --model medium
 
 ## License
 
-This is a wrapper around OpenAI's Whisper model. See https://github.com/openai/whisper for more information.
+This is a wrapper around FasterWhisper. See https://github.com/SYSTRAN/faster-whisper for more information.
