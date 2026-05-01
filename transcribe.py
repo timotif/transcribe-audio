@@ -17,7 +17,7 @@ except ImportError:
     sys.exit(1)
 
 
-def transcribe_audio(audio_path: str, model_name: str = "base", language: str = None, output_format: str = "text") -> str:
+def transcribe_audio(audio_path: str, model_name: str = "small", language: str = None, output_format: str = "text") -> str:
     """
     Transcribe an audio file using Whisper.
     
@@ -55,7 +55,7 @@ def main():
         epilog="""
 Examples:
   python transcribe.py audio.mp3
-  python transcribe.py audio.wav --model small --language en
+  python transcribe.py audio.wav --model tiny
   python transcribe.py audio.mp3 --output output.txt
   python transcribe.py audio.m4a --model large --language es
         """
@@ -68,9 +68,9 @@ Examples:
     
     parser.add_argument(
         "-m", "--model",
-        default="base",
+        default="small",
         choices=["tiny", "base", "small", "medium", "large"],
-        help="Whisper model size (default: base). Larger models are more accurate but slower."
+        help="Whisper model size (default: small). Larger models are more accurate but slower."
     )
     
     parser.add_argument(

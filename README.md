@@ -28,14 +28,14 @@ This will install:
 
 ## Usage
 
-### Basic transcription (uses 'base' model)
+### Basic transcription (uses 'small' model by default)
 ```bash
 python transcribe.py audio.mp3
 ```
 
-### Specify model size
+### Specify a different model size
 ```bash
-python transcribe.py audio.wav --model small
+python transcribe.py audio.wav --model tiny
 python transcribe.py audio.m4a --model large
 ```
 
