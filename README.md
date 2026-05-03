@@ -25,6 +25,16 @@ pip install -r requirements.txt
 
 This will install `faster-whisper` - a much faster implementation of OpenAI's Whisper model.
 
+### Use from anywhere (optional)
+
+Symlink the `transcribe` wrapper into a directory on your `$PATH`. **Symlink — do not copy**, because the wrapper resolves its own location to find `transcribe.py`.
+
+```bash
+ln -s /path/to/repo/transcribe ~/.local/bin/transcribe
+```
+
+After that you can run `transcribe audio.mp3` from any directory.
+
 ## Features Overview
 
 - **Multiple model sizes**: Choose from tiny, base, small, medium, or large models
