@@ -7,12 +7,22 @@
 #   ln -s /path/to/repo/transcribe ~/.local/bin/transcribe
 #
 # Copying breaks the location-detection logic below.
+#
+# DEPENDENCIES: Requires uv (https://docs.astral.sh/uv/getting-started/installation/)
+# uv will automatically create/sync the virtual environment on first run.
 
 # Resolve symlinks to find the real location of this script
 SOURCE="${BASH_SOURCE[0]}"
 while [[ -L "$SOURCE" ]]; do
+    DIR="$( cd "$( dirname "$SOURCE" )" && pwd )"
     SOURCE="$(readlink "$SOURCE")"
+    [[ "$SOURCE" != /* ]] && SOURCE="$DIR/$SOURCE"
 done
 SCRIPT_DIR="$( cd "$( dirname "$SOURCE" )" && pwd )"
 
-python "$SCRIPT_DIR/transcribe.py" "$@"
+if ! command -v uv &>/dev/null; then
+    echo "Error: uv is not installed. See https://docs.astral.sh/uv/getting-started/installation/" >&2
+    exit 1
+fi
+
+uv run --project "$SCRIPT_DIR" "$SCRIPT_DIR/transcribe.py" "$@"

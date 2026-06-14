@@ -13,8 +13,20 @@ try:
     from faster_whisper import WhisperModel
 except ImportError:
     print("Error: faster-whisper is not installed.", file=sys.stderr)
-    print("Install it with: pip install -r requirements.txt", file=sys.stderr)
+    print("Install it with: uv sync  (or run via the 'transcribe' wrapper)", file=sys.stderr)
     sys.exit(1)
+
+# Load .env from the script's directory if present
+_env_file = Path(__file__).parent / ".env"
+if _env_file.exists():
+    for _line in _env_file.read_text().splitlines():
+        _line = _line.strip()
+        if _line and not _line.startswith("#") and "=" in _line:
+            _key, _, _val = _line.partition("=")
+            os.environ.setdefault(_key.strip(), _val.strip())
+
+if not os.environ.get("HF_TOKEN"):
+    print("Warning: HF_TOKEN not set. Create a .env file in the script directory with HF_TOKEN=your_token to avoid rate limits.", file=sys.stderr)
 
 
 def transcribe_audio(audio_path: str, model_name: str = "small", language: str = None, output_format: str = "text") -> str:

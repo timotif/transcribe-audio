@@ -6,6 +6,7 @@ __pycache__/
 .Python
 env/
 venv/
+.venv/
 ENV/
 build/
 develop-eggs/
@@ -34,10 +35,12 @@ models/
 *.swo
 *~
 
+# Environment
+.env
+
 # OS
 .DS_Store
 Thumbs.db
 
 # Output files
 *.txt
-!requirements.txt

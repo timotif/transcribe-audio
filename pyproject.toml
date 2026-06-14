@@ -1,0 +1,8 @@
+[project]
+name = "transcribe-audio"
+version = "0.1.0"
+description = "CLI tool for transcribing audio files using FasterWhisper"
+requires-python = ">=3.9"
+dependencies = [
+    "faster-whisper>=1.2.1",
+]
