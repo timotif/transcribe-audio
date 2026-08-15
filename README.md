@@ -36,11 +36,17 @@ That's it. On first run, `uv` will automatically create a virtual environment an
 
 > **No manual `pip install` or venv activation needed.**
 
-4. (Optional) Set your HuggingFace token to avoid rate limit warnings on model downloads:
+4. (Optional) Configure environment variables — copy the example file and edit it:
    ```bash
    cp .env.example .env
-   # Edit .env and add your token from https://huggingface.co/settings/tokens
    ```
+
+   | Variable | Default | Purpose |
+   |----------|---------|---------|
+   | `HF_TOKEN` | unset | Your Hugging Face token ([get one here](https://huggingface.co/settings/tokens)). Avoids rate-limit warnings/throttling on model downloads. |
+   | `HF_XET_HIGH_PERFORMANCE` | `1` (set automatically by `transcribe.py`) | Enables extra parallelism in Hugging Face's Xet transfer client for faster model downloads. Set to `0` in `.env` to disable, e.g. on a constrained connection. |
+
+   `.env` is loaded automatically from the repo directory on every run; both variables are optional.
 
 ## Usage
 
@@ -75,7 +81,7 @@ uv run transcribe.py audio.mp3
 | medium | ~1.5GB | 🐢 | ⭐⭐⭐⭐ |
 | large | ~2.9GB | 🐢🐢 | ⭐⭐⭐⭐⭐ |
 
-The first run downloads the model to `~/.cache/huggingface/` (not stored in this repo).
+The first run for a given model size downloads it to `~/.cache/huggingface/` (not stored in this repo) — larger models can take a while. `transcribe` tells you up front whether the model is already cached locally or needs to be downloaded, so a slow first run for `medium`/`large` isn't mistaken for the tool hanging.
 
 ## Supported Audio Formats
 

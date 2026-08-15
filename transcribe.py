@@ -28,6 +28,47 @@ if _env_file.exists():
 if not os.environ.get("HF_TOKEN"):
     print("Warning: HF_TOKEN not set. Create a .env file in the script directory with HF_TOKEN=your_token to avoid rate limits.", file=sys.stderr)
 
+# huggingface_hub downloads model files over the Xet protocol by default
+# (via the hf_xet package) when it's installed, which is already faster than
+# plain HTTP. HF_XET_HIGH_PERFORMANCE opts into additional parallelism on
+# top of that, unless the user has already set a preference explicitly.
+os.environ.setdefault("HF_XET_HIGH_PERFORMANCE", "1")
+
+
+# CTranslate2 repack of the model used by faster-whisper, per model name.
+_FASTER_WHISPER_REPO_PREFIX = "Systran/faster-whisper-"
+
+
+def _model_is_cached(model_name: str) -> bool:
+    """
+    Best-effort check for whether a FasterWhisper model is already fully
+    downloaded to the local Hugging Face cache. Returns False (i.e. "assume
+    a download is needed") if the cache can't be inspected for any reason.
+    """
+    try:
+        from huggingface_hub import scan_cache_dir
+    except ImportError:
+        return False
+
+    repo_id = _FASTER_WHISPER_REPO_PREFIX + model_name
+    try:
+        cache_info = scan_cache_dir()
+    except Exception:
+        return False
+
+    for repo in cache_info.repos:
+        if repo.repo_id != repo_id:
+            continue
+        for revision in repo.revisions:
+            file_names = {f.file_name for f in revision.files}
+            # model.bin is the large weights file; its presence in a
+            # revision snapshot means the download completed (partial /
+            # in-progress downloads live in blobs/*.incomplete and never
+            # get linked into a revision's file list).
+            if "model.bin" in file_names:
+                return True
+    return False
+
 
 def transcribe_audio(audio_path: str, model_name: str = "small", language: str = None, output_format: str = "text") -> str:
     """
@@ -51,7 +92,14 @@ def transcribe_audio(audio_path: str, model_name: str = "small", language: str =
     if audio_file.suffix.lower() not in supported_formats:
         raise ValueError(f"Unsupported audio format: {audio_file.suffix}. Supported: {supported_formats}")
     
-    print(f"Loading FasterWhisper model '{model_name}'...", file=sys.stderr)
+    if _model_is_cached(model_name):
+        print(f"Loading FasterWhisper model '{model_name}' (cached locally)...", file=sys.stderr)
+    else:
+        print(
+            f"Model '{model_name}' not found in local cache — downloading from Hugging Face "
+            "(this can take a while for larger models; progress will be shown below)...",
+            file=sys.stderr,
+        )
     model = WhisperModel(model_name)
     
     print(f"Transcribing audio file: {audio_path}", file=sys.stderr)
