@@ -97,7 +97,7 @@ def _model_is_cached(model_name: str) -> bool:
     return False
 
 
-def transcribe_audio(audio_path: str, model_name: str = "small", language: str = None, output_format: str = "text") -> str:
+def transcribe_audio(audio_path: str, model_name: str = "turbo", language: str = None, output_format: str = "text") -> str:
     """
     Transcribe an audio file using FasterWhisper.
     
@@ -148,7 +148,6 @@ Examples:
   python transcribe.py audio.wav --model tiny
   python transcribe.py audio.mp3 --output output.txt
   python transcribe.py audio.m4a --model large --language es
-  python transcribe.py audio.mp3 --model turbo
         """
     )
     
@@ -159,11 +158,12 @@ Examples:
     
     parser.add_argument(
         "-m", "--model",
-        default="small",
+        default="turbo",
         choices=_available_models(),
         metavar="MODEL",
-        help="Whisper model (default: small). Larger models are more accurate but "
-             "slower; 'turbo' is large-v3 quality at much higher speed. "
+        help="Whisper model (default: turbo, which gives near-large accuracy at "
+             "much higher speed). Smaller models (tiny/base/small) download "
+             "faster and use less memory. "
              "Choices: " + ", ".join(_available_models()) + "."
     )
     

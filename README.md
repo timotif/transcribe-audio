@@ -53,7 +53,7 @@ That's it. On first run, `uv` will automatically create a virtual environment an
 ```bash
 transcribe audio.mp3
 transcribe audio.wav --model tiny
-transcribe audio.m4a --model turbo --output transcript.txt
+transcribe audio.m4a --output transcript.txt
 transcribe audio.mp3 --language es
 ```
 
@@ -61,7 +61,7 @@ transcribe audio.mp3 --language es
 
 | Flag | Default | Description |
 |------|---------|-------------|
-| `-m`, `--model` | `small` | Model name — see [Models](#models). Run `transcribe --help` for the full list. |
+| `-m`, `--model` | `turbo` | Model name — see [Models](#models). Run `transcribe --help` for the full list. |
 | `-l`, `--language` | auto-detect | Language code, e.g. `en`, `es`, `fr` |
 | `-o`, `--output` | stdout | Output file path |
 
@@ -85,8 +85,10 @@ common ones:
 | large | ~3.1GB | 🐢🐢 | ⭐⭐⭐⭐⭐ |
 | turbo | ~1.6GB | ⚡⚡ | ⭐⭐⭐⭐⭐ |
 
-`turbo` is usually the best trade-off for long files: near-`large` accuracy at
-a fraction of the size and time.
+`turbo` is the default: near-`large` accuracy at a fraction of the size and
+time, which makes it the best all-round choice for long files. Pick a smaller
+model (`tiny`/`base`/`small`) if you want a faster first-run download or lower
+memory use, or a pinned `large-v*` if you need maximum accuracy.
 
 Also available: version-pinned `large-v1`/`large-v2`/`large-v3`
 (`large` is an alias for `large-v3`), English-only `.en` variants
@@ -94,7 +96,7 @@ Also available: version-pinned `large-v1`/`large-v2`/`large-v3`
 `distil-*` models. Run `transcribe --help` for the authoritative list — it is
 read from FasterWhisper itself, so it stays correct as upstream adds models.
 
-The first run for a given model size downloads it to `~/.cache/huggingface/` (not stored in this repo) — larger models can take a while. `transcribe` tells you up front whether the model is already cached locally or needs to be downloaded, so a slow first run for `medium`/`large` isn't mistaken for the tool hanging.
+The first run for a given model size downloads it to `~/.cache/huggingface/` (not stored in this repo) — larger models can take a while. `transcribe` tells you up front whether the model is already cached locally or needs to be downloaded, so the first run on a fresh machine (which downloads `turbo`, ~1.6GB) isn't mistaken for the tool hanging.
 
 ## Supported Audio Formats
 
