@@ -53,7 +53,7 @@ That's it. On first run, `uv` will automatically create a virtual environment an
 ```bash
 transcribe audio.mp3
 transcribe audio.wav --model tiny
-transcribe audio.m4a --model large --output transcript.txt
+transcribe audio.m4a --model turbo --output transcript.txt
 transcribe audio.mp3 --language es
 ```
 
@@ -61,7 +61,7 @@ transcribe audio.mp3 --language es
 
 | Flag | Default | Description |
 |------|---------|-------------|
-| `-m`, `--model` | `small` | Model size: tiny, base, small, medium, large |
+| `-m`, `--model` | `small` | Model name — see [Models](#models). Run `transcribe --help` for the full list. |
 | `-l`, `--language` | auto-detect | Language code, e.g. `en`, `es`, `fr` |
 | `-o`, `--output` | stdout | Output file path |
 
@@ -71,7 +71,10 @@ transcribe audio.mp3 --language es
 uv run transcribe.py audio.mp3
 ```
 
-## Model Sizes
+## Models
+
+The `--model` flag accepts any model name FasterWhisper can resolve. The
+common ones:
 
 | Model | Size | Speed | Accuracy |
 |-------|------|-------|----------|
@@ -79,7 +82,17 @@ uv run transcribe.py audio.mp3
 | base | ~140MB | ⚡⚡ | ⭐⭐ |
 | small | ~466MB | ⚡ | ⭐⭐⭐ |
 | medium | ~1.5GB | 🐢 | ⭐⭐⭐⭐ |
-| large | ~2.9GB | 🐢🐢 | ⭐⭐⭐⭐⭐ |
+| large | ~3.1GB | 🐢🐢 | ⭐⭐⭐⭐⭐ |
+| turbo | ~1.6GB | ⚡⚡ | ⭐⭐⭐⭐⭐ |
+
+`turbo` is usually the best trade-off for long files: near-`large` accuracy at
+a fraction of the size and time.
+
+Also available: version-pinned `large-v1`/`large-v2`/`large-v3`
+(`large` is an alias for `large-v3`), English-only `.en` variants
+(`tiny.en`, `base.en`, `small.en`, `medium.en`), and the smaller distilled
+`distil-*` models. Run `transcribe --help` for the authoritative list — it is
+read from FasterWhisper itself, so it stays correct as upstream adds models.
 
 The first run for a given model size downloads it to `~/.cache/huggingface/` (not stored in this repo) — larger models can take a while. `transcribe` tells you up front whether the model is already cached locally or needs to be downloaded, so a slow first run for `medium`/`large` isn't mistaken for the tool hanging.
 

@@ -49,6 +49,20 @@ def _repo_id_for_model(model_name: str) -> str | None:
     return _MODELS.get(model_name)
 
 
+# Fallback list used only if faster-whisper's table can't be imported; the
+# real list is read from _MODELS so new upstream models work automatically.
+_FALLBACK_MODEL_CHOICES = ["tiny", "base", "small", "medium", "large"]
+
+
+def _available_models() -> list[str]:
+    """Model names faster-whisper can resolve, for the --model choices."""
+    try:
+        from faster_whisper.utils import _MODELS
+    except ImportError:
+        return _FALLBACK_MODEL_CHOICES
+    return sorted(_MODELS)
+
+
 def _model_is_cached(model_name: str) -> bool:
     """
     Best-effort check for whether a FasterWhisper model is already fully
@@ -89,7 +103,7 @@ def transcribe_audio(audio_path: str, model_name: str = "small", language: str =
     
     Args:
         audio_path: Path to the audio file
-        model_name: Whisper model size (tiny, base, small, medium, large)
+        model_name: FasterWhisper model name (e.g. tiny, small, large, turbo)
         language: Language code (e.g., 'en', 'es'). Auto-detect if None.
         output_format: Output format ('text', 'json', 'vtt', 'srt', 'tsv')
     
@@ -134,6 +148,7 @@ Examples:
   python transcribe.py audio.wav --model tiny
   python transcribe.py audio.mp3 --output output.txt
   python transcribe.py audio.m4a --model large --language es
+  python transcribe.py audio.mp3 --model turbo
         """
     )
     
@@ -145,8 +160,11 @@ Examples:
     parser.add_argument(
         "-m", "--model",
         default="small",
-        choices=["tiny", "base", "small", "medium", "large"],
-        help="Whisper model size (default: small). Larger models are more accurate but slower."
+        choices=_available_models(),
+        metavar="MODEL",
+        help="Whisper model (default: small). Larger models are more accurate but "
+             "slower; 'turbo' is large-v3 quality at much higher speed. "
+             "Choices: " + ", ".join(_available_models()) + "."
     )
     
     parser.add_argument(
