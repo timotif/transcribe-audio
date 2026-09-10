@@ -35,8 +35,18 @@ if not os.environ.get("HF_TOKEN"):
 os.environ.setdefault("HF_XET_HIGH_PERFORMANCE", "1")
 
 
-# CTranslate2 repack of the model used by faster-whisper, per model name.
-_FASTER_WHISPER_REPO_PREFIX = "Systran/faster-whisper-"
+def _repo_id_for_model(model_name: str) -> str | None:
+    """
+    Resolve a faster-whisper model name to the Hugging Face repo it downloads
+    from. The mapping is not a simple prefix: "large" aliases to the large-v3
+    repo, and turbo/distil models live under different orgs entirely, so use
+    faster-whisper's own table rather than reconstructing the name.
+    """
+    try:
+        from faster_whisper.utils import _MODELS
+    except ImportError:
+        return None
+    return _MODELS.get(model_name)
 
 
 def _model_is_cached(model_name: str) -> bool:
@@ -50,7 +60,10 @@ def _model_is_cached(model_name: str) -> bool:
     except ImportError:
         return False
 
-    repo_id = _FASTER_WHISPER_REPO_PREFIX + model_name
+    repo_id = _repo_id_for_model(model_name)
+    if repo_id is None:
+        return False
+
     try:
         cache_info = scan_cache_dir()
     except Exception:
